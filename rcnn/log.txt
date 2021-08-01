@@ -1,0 +1,30 @@
+ - 161s - loss: 0.4608 - accuracy: 0.7710
+The ROCAUC for the val families in this epoch is  0.6242864223125242
+Saving current model...
+taxon  1  epoch  1
+Epoch 1/1
+ - 152s - loss: 0.2829 - accuracy: 0.8831
+The ROCAUC for the val families in this epoch is  0.6476548778014866
+Saving current model...
+taxon  1  epoch  2
+Epoch 1/1
+ - 152s - loss: 0.2283 - accuracy: 0.9084
+The ROCAUC for the val families in this epoch is  0.6441177894055209
+taxon  1  epoch  3
+Epoch 1/1
+ - 151s - loss: 0.1971 - accuracy: 0.9226
+The ROCAUC for the val families in this epoch is  0.6339905642518576
+taxon  1  epoch  4
+Epoch 1/1
+ - 151s - loss: 0.1730 - accuracy: 0.9336
+The ROCAUC for the val families in this epoch is  0.6092274534813695
+Traceback (most recent call last):
+  File "rcnn.py", line 214, in <module>
+    model = load_model(model_file)
+  File "/tensorflow-1.15.2/python3.7/keras/engine/saving.py", line 492, in load_wrapper
+    return load_function(*args, **kwargs)
+  File "/tensorflow-1.15.2/python3.7/keras/engine/saving.py", line 584, in load_model
+    model = _deserialize_model(h5dict, custom_objects, compile)
+  File "/tensorflow-1.15.2/python3.7/keras/engine/saving.py", line 273, in _deserialize_model
+    model_config = json.loads(model_config.decode('utf-8'))
+AttributeError: 'str' object has no attribute 'decode'
