@@ -136,10 +136,16 @@ def get_triple(positives, families, hp_set, vp_set, vp2patho, option):
             pair = (hp, vp)
             if pair not in positives_set:
                 triple_neg.append((hp, vp, vp2patho[vp], 0))
+
+    #TODO: remove
+    import random
+    triple_neg = random.choices(triple_neg, k=len(triple_neg) // 100)
                     
     if option == 'train':
+        # triple_pos = np.repeat(np.array(triple_pos).astype(np.dtype("<U20")), len(triple_neg)//len(triple_pos), axis = 0)
         triple_pos = np.repeat(np.array(triple_pos), len(triple_neg)//len(triple_pos), axis = 0)
         triples = np.concatenate((triple_pos, np.array(triple_neg)), axis=0)
+        # triples = np.concatenate((triple_pos, np.array(triple_neg).astype(np.dtype("<U20"))), axis=0)
         np.random.shuffle(triples)
         return triples
     if option == 'val':
