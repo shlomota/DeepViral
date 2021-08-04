@@ -130,8 +130,8 @@ with open(hpi_file, 'r') as f:
 
 #added
 # family 11118 sars1 694009 sars2 2697049
-sars2_interactions = 'data/media-6.xlsx'
-sars2_sequences = 'data/2020-04-krogan-sarscov2-sequences-uniprot-mapping.xlsx'
+sars2_interactions = '../data/media-6.xlsx'
+sars2_sequences = '../data/2020-04-krogan-sarscov2-sequences-uniprot-mapping.xlsx'
 dfs_interaction = pd.read_excel(sars2_interactions, sheet_name = None, skiprows=1)
 for index, row in dfs_interaction["Sheet1"].iterrows():
     hp = row['Preys']
@@ -149,7 +149,7 @@ for index, row in dfs_interaction["Sheet1"].iterrows():
     vp2patho[vp] = patho
 
 hcov2id = {}
-with open('data/coronaviridae_seqs.txt', 'r') as f:
+with open('../data/coronaviridae_seqs.txt', 'r') as f:
     next(f)
     for line in f:
         items = line.strip().split('\t')
@@ -166,7 +166,7 @@ gname2unip = {"BTF3":"P20290", "BAP1":"Q92560", "ALB":"P02768", "NMB":"P08949", 
               "CCNL1":"Q9UK58", "PCM1": "Q15154", "TRAF2": "Q12933", "DDX21": "Q9NR30", "PRKACA": "P17612",
              "CEP68": "Q76N32", "GLA":"P06280", "TRMT1":"Q9NXH9", "SCAP":"Q12770", "RPS4":"P62701",
              "USP10": "Q14694"}
-with open('data/genename2uniprot.tab', 'r') as f:
+with open('../data/genename2uniprot.tab', 'r') as f:
     next(f)
     for line in f:
         items = line.strip().split('\t')
