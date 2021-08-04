@@ -178,7 +178,7 @@ with open('../data/genename2uniprot.tab', 'r') as f:
         gname2unip[gname] = unip
 print("len(gname2unip)", len(gname2unip))
 
-ppi_file = "data/12967_2020_2480_MOESM1_ESM.xlsx"
+ppi_file = "../data/12967_2020_2480_MOESM1_ESM.xlsx"
 dfs = pd.read_excel(ppi_file, sheet_name = "Table S1")
 
 hcovs = ["SARS-CoV", "MERS-CoV", "HCoV-NL63", "HCoV-229E", "HCoV-OC43"]
