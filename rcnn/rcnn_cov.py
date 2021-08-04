@@ -46,8 +46,8 @@ cv = sys.argv[5]
 tid = sys.argv[6]
 
 # print("option: ", option, "threshold: ", thres)
-sars2_interactions = 'data/media-6.xlsx'
-sars2_sequences = 'data/2020-04-krogan-sarscov2-sequences-uniprot-mapping.xlsx'
+sars2_interactions = '../data/media-6.xlsx'
+sars2_sequences = '../data/2020-04-krogan-sarscov2-sequences-uniprot-mapping.xlsx'
 
 # model_file = f'model_{option}_t{taxon1}_v{taxon2}_{cv}_{tid}.h5'
 # preds_file = f'preds_{option}_t{taxon1}_v{taxon2}_{cv}_{tid}.txt'
