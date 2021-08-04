@@ -37,15 +37,15 @@ thres = '0'
 # tid = sys.argv[2]
 # embedding_file = sys.argv[1]
 
-option = sys.argv[1]
-embedding_file = sys.argv[2]
-taxon1 = sys.argv[3]
-taxon2 = sys.argv[4]
-taxon3 = sys.argv[5]
-cv = sys.argv[6]
-tid = sys.argv[7]
+# option = sys.argv[1]
+embedding_file = sys.argv[1]
+taxon1 = sys.argv[2]
+taxon2 = sys.argv[3]
+taxon3 = sys.argv[4]
+cv = sys.argv[5]
+tid = sys.argv[6]
 
-print("option: ", option, "threshold: ", thres)
+# print("option: ", option, "threshold: ", thres)
 sars2_interactions = 'data/media-6.xlsx'
 sars2_sequences = 'data/2020-04-krogan-sarscov2-sequences-uniprot-mapping.xlsx'
 
