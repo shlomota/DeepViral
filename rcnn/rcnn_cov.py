@@ -33,7 +33,7 @@ batch_size = 200*num_gpus
 steps = 1000
 
 thres = '0'
-# option = 'seq'
+option = 'seq'
 # tid = sys.argv[2]
 # embedding_file = sys.argv[1]
 
