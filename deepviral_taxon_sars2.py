@@ -21,7 +21,8 @@ from models import *
 MAXLEN = 1000
 epochs = 30
 num_gpus = 1
-batch_size = 1500*num_gpus
+# batch_size = 1500*num_gpus
+batch_size = 500*num_gpus
 steps = 500
 
 thres = '0'
