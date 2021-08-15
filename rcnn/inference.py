@@ -57,8 +57,8 @@ for vname in tqdm(vp.name.unique()):
         score2 = 0
         hseq = hp[hp["Entry"] == hname]["Sequence"].values[0]
         vseq = vp[vp["name"] == vname]["sequence"].values[0]
-        a = seq2t.embed_normalized(hseq)
-        b = seq2t.embed_normalized(vseq)
+        a = seq2t.embed_normalized(hseq, 1000)
+        b = seq2t.embed_normalized(vseq, 1000)
         score = model.predict([[a], [b]])
 
         row = unthresh[(unthresh["Human Protein"]==hname)&(unthresh["Virus Protein"]==vname)]
@@ -75,9 +75,7 @@ df.to_csv("results.csv")
 
 """
 tid = 0
-
 model_file = f'model_rcnn_{tid}.h5'
-
 model = load_model(model_file)
 
 
