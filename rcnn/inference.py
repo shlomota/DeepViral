@@ -55,18 +55,18 @@ seq2t = s2t('vec5_CTC.txt')
 for vname in tqdm(vp.name.unique()):
     for hname in hp["Entry"].unique():
 
-        hgname = hp[hp["Entry"]==hname]["Gene names  (primary )"].at[0]
+        hgname = str(hp[hp["Entry"]==hname]["Gene names  (primary )"])
         score1 = 0
         score2 = 0
         hseq = hp[hp["Entry"] == hname]["Sequence"].values[0]
         vseq = vp[vp["name"] == vname]["sequence"].values[0]
         a = seq2t.embed_normalized(hseq, 1000)
         b = seq2t.embed_normalized(vseq, 1000)
-        score = model.predict([[a], [b]])[0]
+        score = model.predict([[a], [b]])[0][0]
 
         row = unthresh[(unthresh["Human Protein"]==hname)&(unthresh["Virus Protein"]==vname)]
         if not row.empty:
-            score1 = row["SaintScore"].at[0]
+            score1 = float(row["SaintScore"])
 
         if not b2[(b2["Host protein"]==hname)&(b2["Viral protein"]==vname)].empty:
             score2 = 1
