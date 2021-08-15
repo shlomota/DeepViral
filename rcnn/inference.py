@@ -28,7 +28,8 @@ b2 = pd.read_csv(r"../data/new/2b.csv")
 unthresh = pd.read_csv(r"../data/new/unthresholded.csv")
 
 
-hp = pd.read_csv(r"../data/new/all_human_protein_sequences.csv")
+# hp = pd.read_csv(r"../data/new/all_human_protein_sequences.csv")
+hp = pd.read_csv(r"../data/new/human_protein_sequences.csv")
 vp = pd.read_csv(r"../data/new/cov2_proteins.csv")
 
 # missing_proteins = ['KIAA0907', 'HIST1H1C', 'ATP5O', 'DEFA1']
@@ -52,7 +53,7 @@ from seq2tensor import s2t
 seq2t = s2t('vec5_CTC.txt')
 
 for vname in tqdm(vp.name.unique()):
-    for hname in tqdm(hp["Entry"].unique()):
+    for hname in hp["Entry"].unique():
         score1 = 0
         score2 = 0
         hseq = hp[hp["Entry"] == hname]["Sequence"].values[0]
