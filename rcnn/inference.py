@@ -35,7 +35,7 @@ vp = pd.read_csv(r"../data/new/cov2_proteins.csv")
 # missing_proteins = ['KIAA0907', 'HIST1H1C', 'ATP5O', 'DEFA1']
 # hp_list = b2['Host protein'].unique()
 
-df = pd.DataFrame(columns=["hp", "vp", "score", "score1", "score2"])
+df = pd.DataFrame(columns=["hp", "hg", "vp", "score", "score1", "score2"])
 
 
 tid = 0
@@ -54,22 +54,26 @@ seq2t = s2t('vec5_CTC.txt')
 
 for vname in tqdm(vp.name.unique()):
     for hname in hp["Entry"].unique():
+
+        hgname = hp[hp["Entry"]==hname]["Gene names  (primary )"].at[0]
         score1 = 0
         score2 = 0
         hseq = hp[hp["Entry"] == hname]["Sequence"].values[0]
         vseq = vp[vp["name"] == vname]["sequence"].values[0]
         a = seq2t.embed_normalized(hseq, 1000)
         b = seq2t.embed_normalized(vseq, 1000)
-        score = model.predict([[a], [b]])
+        score = model.predict([[a], [b]])[0]
 
         row = unthresh[(unthresh["Human Protein"]==hname)&(unthresh["Virus Protein"]==vname)]
         if not row.empty:
-            score1 = row["SaintScore"]
+            score1 = row["SaintScore"].at[0]
 
         if not b2[(b2["Host protein"]==hname)&(b2["Viral protein"]==vname)].empty:
             score2 = 1
 
-        df.loc[len(df.index)] = ["hname", "vname", score, score1, score2]
+        if score1 or score2:
+            print([hname, hgname, vname, score, score1, score2])
+        df.loc[len(df.index)] = [hname, hgname, vname, score, score1, score2]
 
     #encoding="cp1252"
 df.to_csv("results.csv")
