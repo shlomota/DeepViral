@@ -68,7 +68,7 @@ for vname in tqdm(vp.name.unique()):
         if not row.empty:
             score1 = float(row["SaintScore"])
 
-        if not b2[(b2["Host protein"]==hname)&(b2["Viral protein"]==vname)].empty:
+        if not b2[(b2["Host protein"]==hgname)&(b2["Viral protein"]==vname)].empty:
             score2 = 1
 
         if score1 or score2:
