@@ -24,12 +24,12 @@ from tqdm import tqdm
 
 import pandas as pd
 
-b2 = pd.read_csv(r"..\data\new\2b.csv")
-unthresh = pd.read_csv(r"..\data\new\unthresholded.csv")
+b2 = pd.read_csv(r"../data/new/2b.csv")
+unthresh = pd.read_csv(r"../data/new/unthresholded.csv")
 
 
-hp = pd.read_csv(r"..\data\new\all_human_protein_sequences.csv")
-vp = pd.read_csv(r"..\data\new\cov2_proteins.csv")
+hp = pd.read_csv(r"../data/new/all_human_protein_sequences.csv")
+vp = pd.read_csv(r"../data/new/cov2_proteins.csv")
 
 # missing_proteins = ['KIAA0907', 'HIST1H1C', 'ATP5O', 'DEFA1']
 # hp_list = b2['Host protein'].unique()
@@ -38,9 +38,7 @@ df = pd.DataFrame(columns=["hp", "vp", "score", "score1", "score2"])
 
 
 tid = 0
-
 model_file = f'model_rcnn_{tid}.h5'
-
 model = load_model(model_file)
 
 
