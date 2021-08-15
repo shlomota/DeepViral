@@ -52,7 +52,7 @@ from seq2tensor import s2t
 seq2t = s2t('vec5_CTC.txt')
 
 for vname in tqdm(vp.name.unique()):
-    for hname in hp["Entry"].unique():
+    for hname in tqdm(hp["Entry"].unique()):
         score1 = 0
         score2 = 0
         hseq = hp[hp["Entry"] == hname]["Sequence"].values[0]
