@@ -51,6 +51,13 @@ from seq2tensor import s2t
 # a = embed_dict["P14907"] #sars
 
 seq2t = s2t('vec5_CTC.txt')
+hp["Entry"] = hp["Entry"].str.upper()
+hp["Gene names  (primary )"] = hp["Gene names  (primary )"].str.upper()
+vp["name"] = vp["name"].str.upper()
+unthresh["Virus Protein"] = unthresh["Virus Protein"].str.upper()
+unthresh["Human Protein"] = unthresh["Human Protein"].str.upper()
+b2["Viral protein"] = b2["Viral protein"].str.upper()
+b2["Host protein"] = b2["Host protein"].str.upper()
 
 for vname in tqdm(vp.name.unique()):
     for hname in hp["Entry"].unique():
