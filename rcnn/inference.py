@@ -35,7 +35,7 @@ vp = pd.read_csv(r"../data/new/cov2_proteins.csv")
 # missing_proteins = ['KIAA0907', 'HIST1H1C', 'ATP5O', 'DEFA1']
 # hp_list = b2['Host protein'].unique()
 
-df = pd.DataFrame(columns=["hp", "hg", "vp", "score", "score1", "score2"])
+df = pd.DataFrame(columns=["hp", "hg", "vp", "score", "score1", "mist", "score2"])
 
 
 tid = 0
@@ -74,13 +74,14 @@ for vname in tqdm(vp.name.unique()):
         row = unthresh[(unthresh["Human Protein"]==hname)&(unthresh["Virus Protein"]==vname)]
         if not row.empty:
             score1 = float(row["SaintScore"])
+            mist = float(row["MIST"])
 
         if not b2[(b2["Host protein"]==hgname)&(b2["Viral protein"]==vname)].empty:
             score2 = 1
 
         if score1 or score2:
-            print([hname, hgname, vname, score, score1, score2])
-        df.loc[len(df.index)] = [hname, hgname, vname, score, score1, score2]
+            print([hname, hgname, vname, score, score1, mist, score2])
+        df.loc[len(df.index)] = [hname, hgname, vname, score, score1, mist, score2]
 
     #encoding="cp1252"
 df.to_csv("results.csv")
