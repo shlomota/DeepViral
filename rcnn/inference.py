@@ -64,6 +64,7 @@ for vname in tqdm(vp.name.unique()):
 
         hgname = hp[hp["Entry"]==hname]["Gene names  (primary )"].values[0]
         score1 = 0
+        mist = 0
         score2 = 0
         hseq = hp[hp["Entry"] == hname]["Sequence"].values[0]
         vseq = vp[vp["name"] == vname]["sequence"].values[0]
