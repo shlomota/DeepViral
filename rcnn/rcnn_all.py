@@ -34,12 +34,11 @@ steps = 1000
 
 thres = '0'
 option = 'seq'
-tid = sys.argv[2]
 embedding_file = sys.argv[1]
 print("option: ", option, "threshold: ", thres)
 
-model_file = f'model_rcnn_{tid}.h5'
-preds_file = f'preds_rcnn_{tid}.txt'
+model_file = f'model_rcnn.h5'
+preds_file = f'preds_rcnn.txt'
 open_preds = open(preds_file, "w")
 open_preds.close()
 
