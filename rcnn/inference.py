@@ -39,7 +39,7 @@ df = pd.DataFrame(columns=["hp", "hg", "vp", "score", "score1", "mist", "score2"
 
 
 tid = 0
-model_file = f'model_rcnn_{tid}.h5'
+model_file = f'model_rcnn.h5'
 model = load_model(model_file)
 
 
@@ -85,7 +85,7 @@ for vname in tqdm(vp.name.unique()):
         df.loc[len(df.index)] = [hname, hgname, vname, score, score1, mist, score2]
 
     #encoding="cp1252"
-df.to_csv("results.csv")
+df.to_csv("/content/drive/My Drive/results.csv")
 
 """
 tid = 0
