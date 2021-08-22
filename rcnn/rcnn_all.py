@@ -183,7 +183,7 @@ adam = Adam(lr=0.001, amsgrad=True, epsilon=1e-6)
 rms = RMSprop(lr=0.001)
 model.compile(optimizer=adam, loss='binary_crossentropy', metrics=['accuracy'])
 
-train_gen, val_gen, test_gen = get_generators(triple_train, set(), set(), batch_size, prot2embed, option, embed_dict, MAXLEN=seq_size)
+train_gen, val_gen, test_gen = get_generators(triple_train, triple_train, triple_train, batch_size, prot2embed, option, embed_dict, MAXLEN=seq_size)
 
 val_maxauc = 0
 for i in range(epochs):
