@@ -177,6 +177,7 @@ triple_val, numPos_val = get_triple(positives, val_families, hp_set, val_vps,  v
 
 print("Number of triples in train", len(triple_train))
 
+# todo: restore
 model = None
 model = build_model()
 adam = Adam(lr=0.001, amsgrad=True, epsilon=1e-6)
@@ -201,6 +202,7 @@ for i in range(epochs):
                                         max_queue_size = 50, workers = 1)
 
     y_true = np.concatenate((np.ones(numPos_val), np.zeros(len(triple_train) - numPos_val)))
+    y_true = np.array([int(example[-1]) for example in triple_train])
 
     val_auc = roc_auc_score(y_true, y_score)
     print('The ROCAUC for the val families in this epoch is ', val_auc)
