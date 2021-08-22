@@ -206,7 +206,7 @@ for i in range(epochs):
     print('The ROCAUC for the val families in this epoch is ', val_auc)
     if val_auc > val_maxauc:
         print('Saving current model...')
-        model.save(model_file)
+        model.save("/content/drive/My Drive/" + model_file)
         val_maxauc = val_auc
 
 
