@@ -159,17 +159,18 @@ family_aucs = []
 
 
 K.clear_session()
-tv_families = list(families - set([test_family]))
-val_families = set(np.random.choice(tv_families, size = int(len(tv_families)/5), replace=False))
-train_families = set(tv_families) - val_families
-print('Train families: ', len(train_families), 'validation families', len(val_families))
+# tv_families = list(families - set([test_family]))
+# val_families = set(np.random.choice(tv_families, size = int(len(tv_families)/5), replace=False))
+# train_families = set(tv_families) - val_families
+# print('Train families: ', len(train_families), 'validation families', len(val_families))
 
 train_vps = set()
 train_families = families
 val_families = families
 for family in train_families:
     train_vps = train_vps | family2vp[family]
-val_vps = vp_set - family2vp[test_family] - train_vps
+# val_vps = vp_set - family2vp[test_family] - train_vps
+val_vps = train_vps
 
 triple_train = get_triple(positives, train_families, hp_set, train_vps, vp2patho, 'train')
 triple_val, numPos_val = get_triple(positives, val_families, hp_set, val_vps,  vp2patho, 'val')
