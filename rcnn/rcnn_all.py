@@ -174,9 +174,11 @@ for family in train_families:
 # val_vps = vp_set - family2vp[test_family] - train_vps
 val_vps = train_vps
 
+print(1)
 triple_train = get_triple(positives, train_families, hp_set, train_vps, vp2patho, 'train')
+print(2)
 triple_val, numPos_val = get_triple(positives, val_families, hp_set, val_vps,  vp2patho, 'val')
-
+print(3)
 print("Number of triples in train", len(triple_train))
 
 # todo: restore
