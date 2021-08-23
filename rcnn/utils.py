@@ -139,7 +139,7 @@ def get_triple(positives, families, hp_set, vp_set, vp2patho, option):
 
     #TODO: remove
     import random
-    # triple_neg = random.choices(triple_neg, k=len(triple_neg) // 100)
+    triple_neg = random.choices(triple_neg, k=len(triple_neg) // 10)
 
     if option == 'train':
         triple_pos = np.repeat(np.array(triple_pos), len(triple_neg)//len(triple_pos), axis = 0)
