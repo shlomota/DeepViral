@@ -32,7 +32,7 @@ num_gpus = 1
 # batch_size = 200*num_gpus
 # steps = 1000
 batch_size = 20*num_gpus
-steps = 10000
+steps = 1000
 
 thres = '0'
 option = 'seq'
