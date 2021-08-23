@@ -29,8 +29,10 @@ dim = seq2t.dim
 
 epochs = 5
 num_gpus = 1
-batch_size = 200*num_gpus
-steps = 1000
+# batch_size = 200*num_gpus
+# steps = 1000
+batch_size = 50*num_gpus
+steps = 4000
 
 thres = '0'
 option = 'seq'
