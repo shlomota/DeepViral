@@ -21,6 +21,8 @@ import keras.backend.tensorflow_backend as KTF
 from utils import *
 from models import *
 
+
+
 seq_size = 1000
 MAXLEN = 1000
 seq2t = s2t('vec5_CTC.txt')
