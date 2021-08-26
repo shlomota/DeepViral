@@ -1,10 +1,11 @@
 """
-TODO:
 - separate training and validation
 - load our data (tabels of MERS sars-cov-1 sars-cov-2 high confidence)
 - transfer learning - train on sars-cov-1 and mers with freezing weights
 - evaluate on sars-cov-2 (look at inference.py and analysis.py)
-
+- load and save trained models
+- get some results on val and test for both tasks
+- write up results
 """
 
 
@@ -193,7 +194,7 @@ print("Number of triples in train", len(triple_train))
 
 # todo: restore
 model = None
-model = build_model()
+model = build_model() # todo: load pretrained model instead
 adam = Adam(lr=0.001, amsgrad=True, epsilon=1e-6)
 rms = RMSprop(lr=0.001)
 model.compile(optimizer=adam, loss='binary_crossentropy', metrics=['accuracy'])
