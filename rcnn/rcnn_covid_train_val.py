@@ -46,10 +46,12 @@ steps = 1000
 
 thres = '0'
 option = 'seq'
+tid = sys.argv[2]
 embedding_file = sys.argv[1]
 print("option: ", option, "threshold: ", thres)
 
-model_file = f'model_rcnn.h5'
+# model_file = f'model_rcnn_all_01.h5'
+model_file = f'model_rcnn_all_{tid}.h5'
 preds_file = f'preds_rcnn.txt'
 open_preds = open(preds_file, "w")
 open_preds.close()
@@ -113,53 +115,6 @@ print('Number of pathogens: ', len(pathogens))
 print('Number of families: ', len(families))
 print('Number of viral proteins: ', len(vp_set))
 
-def build_model():
-    seq_input1 = Input(shape=(seq_size, dim), name='seq1')
-    seq_input2 = Input(shape=(seq_size, dim), name='seq2')
-    l1=Conv1D(hidden_dim, 3)
-    r1=Bidirectional(CuDNNGRU(hidden_dim, return_sequences=True))
-    l2=Conv1D(hidden_dim, 3)
-    r2=Bidirectional(CuDNNGRU(hidden_dim, return_sequences=True))
-    l3=Conv1D(hidden_dim, 3)
-    r3=Bidirectional(CuDNNGRU(hidden_dim, return_sequences=True))
-    l4=Conv1D(hidden_dim, 3)
-    r4=Bidirectional(CuDNNGRU(hidden_dim, return_sequences=True))
-    l5=Conv1D(hidden_dim, 3)
-    r5=Bidirectional(CuDNNGRU(hidden_dim, return_sequences=True))
-    l6=Conv1D(hidden_dim, 3)
-    s1=MaxPooling1D(3)(l1(seq_input1))
-    s1=concatenate([r1(s1), s1])
-    s1=MaxPooling1D(3)(l2(s1))
-    s1=concatenate([r2(s1), s1])
-    s1=MaxPooling1D(3)(l3(s1))
-    s1=concatenate([r3(s1), s1])
-    s1=MaxPooling1D(3)(l4(s1))
-    s1=concatenate([r4(s1), s1])
-    s1=MaxPooling1D(3)(l5(s1))
-    s1=concatenate([r5(s1), s1])
-    s1=l6(s1)
-    s1=GlobalAveragePooling1D()(s1)
-    s2=MaxPooling1D(3)(l1(seq_input2))
-    s2=concatenate([r1(s2), s2])
-    s2=MaxPooling1D(3)(l2(s2))
-    s2=concatenate([r2(s2), s2])
-    s2=MaxPooling1D(3)(l3(s2))
-    s2=concatenate([r3(s2), s2])
-    s2=MaxPooling1D(3)(l4(s2))
-    s2=concatenate([r4(s2), s2])
-    s2=MaxPooling1D(3)(l5(s2))
-    s2=concatenate([r5(s2), s2])
-    s2=l6(s2)
-    s2=GlobalAveragePooling1D()(s2)
-    merge_text = multiply([s1, s2])
-    x = Dense(100, activation='linear')(merge_text)
-    x = keras.layers.LeakyReLU(alpha=0.3)(x)
-    x = Dense(int((hidden_dim+7)/2), activation='linear')(x)
-    x = keras.layers.LeakyReLU(alpha=0.3)(x)
-    main_output = Dense(1, activation='sigmoid')(x)
-    merge_model = Model(inputs=[seq_input1, seq_input2], outputs=[main_output])
-    return merge_model
-
 config = tf.ConfigProto()
 config.gpu_options.allow_growth = True
 config.gpu_options.per_process_gpu_memory_fraction = 0.3
@@ -195,8 +150,14 @@ print(3)
 print("Number of triples in train, val", len(triple_train), len(triple_val))
 
 # todo: restore
-model = None
-model = build_model() # todo: load pretrained model instead
+model = load_model(model_file)
+
+# Frozen the weights of the first CNN layers
+# frozen_layer_index = 20 # -5, -8, -12
+frozen_layer_index = int(sys.argv[3])
+for l in model.layers[0:frozen_layer_index]:
+    l.trainable=False
+
 adam = Adam(lr=0.001, amsgrad=True, epsilon=1e-6)
 rms = RMSprop(lr=0.001)
 model.compile(optimizer=adam, loss='binary_crossentropy', metrics=['accuracy'])
@@ -224,9 +185,3 @@ for i in range(epochs):
 
     val_auc = roc_auc_score(y_true, y_score)
     print('The ROCAUC for the val families in this epoch is ', val_auc)
-    if val_auc > val_maxauc:
-        print('Saving current model...')
-        model.save("/content/drive/My Drive/" + model_file)
-        val_maxauc = val_auc
-
-
