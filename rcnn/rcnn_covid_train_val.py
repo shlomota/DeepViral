@@ -1,5 +1,4 @@
 """
-- separate training and validation
 - load our data (tabels of MERS sars-cov-1 sars-cov-2 high confidence)
 - transfer learning - train on sars-cov-1 and mers with freezing weights
 - evaluate on sars-cov-2 (look at inference.py and analysis.py)
@@ -185,12 +184,15 @@ for family in train_families:
 # val_vps = vp_set - family2vp[test_family] - train_vps
 val_vps = train_vps
 
+indices = np.random.choice(len(positives), size = int(len(positives)/5), replace=False)
+val_positives = {tuple(v) for v in np.take(np.array(list(positives)), indices, axis=0)}
+train_positives = positives - val_positives
 print(1)
-triple_train = get_triple(positives, train_families, hp_set, train_vps, vp2patho, 'train')
+triple_train = get_triple(train_positives, train_families, hp_set, train_vps, vp2patho, 'train')
 print(2)
-triple_val, numPos_val = get_triple(positives, val_families, hp_set, val_vps,  vp2patho, 'val')
+triple_val, numPos_val = get_triple(val_positives, val_families, hp_set, val_vps,  vp2patho, 'val')
 print(3)
-print("Number of triples in train", len(triple_train))
+print("Number of triples in train, val", len(triple_train), len(triple_val))
 
 # todo: restore
 model = None
@@ -199,7 +201,8 @@ adam = Adam(lr=0.001, amsgrad=True, epsilon=1e-6)
 rms = RMSprop(lr=0.001)
 model.compile(optimizer=adam, loss='binary_crossentropy', metrics=['accuracy'])
 
-train_gen, val_gen, test_gen = get_generators(triple_train, triple_train, triple_train, batch_size, prot2embed, option, embed_dict, MAXLEN=seq_size)
+# TODO: add triple_test
+train_gen, val_gen, test_gen = get_generators(triple_train, triple_val, triple_train, batch_size, prot2embed, option, embed_dict, MAXLEN=seq_size)
 
 val_maxauc = 0
 for i in range(epochs):
