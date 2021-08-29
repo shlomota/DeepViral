@@ -29,7 +29,8 @@ seq2t = s2t('vec5_CTC.txt')
 hidden_dim = 50
 dim = seq2t.dim
 
-epochs = 10
+# epochs = 10
+epochs = 1
 num_gpus = 1
 batch_size = 200*num_gpus
 steps = 1000
@@ -198,6 +199,7 @@ model.compile(optimizer=adam, loss='binary_crossentropy', metrics=['accuracy'])
 train_gen, val_gen, test_gen = get_generators(triple_train, triple_val, triple_train, batch_size, prot2embed, option, embed_dict, MAXLEN=seq_size)
 
 test_maxauc = 0
+train_acc, test_acc, train_loss, test_loss = [], [], [], []
 for i in range(epochs):
     print('taxon ', counter, ' epoch ', i)
     history = model.fit_generator(generator=train_gen,
@@ -206,7 +208,8 @@ for i in range(epochs):
                         verbose=2,
                         max_queue_size = 50,
                         use_multiprocessing=False,
-                        workers = 1)
+                        workers = 1,
+                        validation_data=test_gen)
     # plot_train_history(history)
 
     y_score = model.predict_generator(generator=train_gen, verbose=2,
@@ -217,17 +220,24 @@ for i in range(epochs):
     y_true = np.array([int(example[-1]) for example in triple_train])
     train_acc = accuracy_score(y_true, (y_score>THRESH).astype(int))
     train_auc = roc_auc_score(y_true, y_score)
-    print('Test ROCAUC: %.3f, acc: %.3f' % (train_auc, train_acc))
+    print('Train ROCAUC: %.3f, acc: %.3f' % (train_auc, train_acc))
 
 
     y_score = model.predict_generator(generator=test_gen, verbose=2,
                                       steps=int(np.ceil(len(triple_test)/batch_size)),
                                       max_queue_size = 50, workers = 1)
     y_true = np.array([int(example[-1]) for example in triple_test])
-
+    print(len(triple_test))
+    print(len(y_true))
+    print(len(y_score))
     test_acc = accuracy_score(y_true, (y_score>THRESH).astype(int))
     test_auc = roc_auc_score(y_true, y_score)
     print('Test ROCAUC: %.3f, acc: %.3f' % (test_auc, test_acc))
+
+    train_acc += history.history["accuracy"]
+    train_loss += history.history["loss"]
+    test_acc += history.history["val_accuracy"]
+    test_loss += history.history["val_loss"]
 
     if test_auc > test_maxauc:
         print('Saving current model...')
@@ -235,3 +245,8 @@ for i in range(epochs):
         test_maxauc = test_auc
 
 
+history.history["accuracy"] = train_acc
+history.history["val_accuracy"] = test_acc
+history.history["loss"] = train_loss
+history.history["val_loss"] = test_acc
+plot_train_history(history)
