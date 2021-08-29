@@ -46,12 +46,12 @@ steps = 1000
 
 thres = '0'
 option = 'seq'
-tid = sys.argv[2]
+model_num = sys.argv[2]
 embedding_file = sys.argv[1]
 print("option: ", option, "threshold: ", thres)
 
 # model_file = f'model_rcnn_all_01.h5'
-model_file = f'model_rcnn_all_{tid}.h5'
+model_file = f'model_rcnn_all_{model_num}.h5'
 preds_file = f'preds_rcnn.txt'
 open_preds = open(preds_file, "w")
 open_preds.close()
@@ -126,45 +126,6 @@ test_vps = set(test_vp2numPos.keys())
 print('Number of test positives: ', len(test_positives))
 print('Number of test viral proteins: ', len(test_vps))
 
-# positives = set()
-# family_dict = {}
-# pathogens = set()
-# family2vp = {}
-# vp2patho = {}
-# vp2numPos = {}
-#
-# with open(hpi_file, 'r') as f:
-#     next(f)
-#     for line in f:
-#         items = line.strip().split('\t')
-#         if items[0] not in hp_set:
-#             continue
-#         if float(items[6]) >= float(thres):
-#             hp = items[0]
-#             vp = items[1]
-#             patho = '<http://purl.obolibrary.org/obo/NCBITaxon_' + items[2] + '>'
-#             if hp not in embed_dict or patho not in embed_dict:
-#                 continue
-#             if len(items[5]) > MAXLEN:
-#                 continue
-#             family = '<http://purl.obolibrary.org/obo/NCBITaxon_' + items[3] + '>'
-#             prot2embed[vp] = np.array(seq2t.embed_normalized(items[5], seq_size))
-#             family_dict[patho] = family
-#             positives.add((hp, vp, patho, family))
-#             pathogens.add(patho)
-#             if family not in family2vp:
-#                 family2vp[family] = set()
-#             family2vp[family].add(vp)
-#             vp2patho[vp] = patho
-#             if vp not in vp2numPos:
-#                 vp2numPos[vp] = 0
-#             vp2numPos[vp] += 1
-# vp_set = set(vp2patho.keys())
-# families = set(family2vp.keys())
-# print('Number of positives: ', len(positives))
-# print('Number of pathogens: ', len(pathogens))
-# print('Number of families: ', len(families))
-# print('Number of viral proteins: ', len(vp_set))
 
 config = tf.ConfigProto()
 config.gpu_options.allow_growth = True
