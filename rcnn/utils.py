@@ -152,6 +152,31 @@ def get_triple(positives, families, hp_set, vp_set, vp2patho, option):
     else: 
         triples = np.concatenate((np.array(triple_pos), np.array(triple_neg)), axis=0)
     return triples, numPos
+
+def get_triple_without_family(positives, hp_set, vp_set, option):
+    triple_pos = [(items[0], items[1], 1) for items in positives]
+    numPos = len(positives)
+    print("Number of positives in %s: %d" % (option, numPos))
+
+    triple_neg = []
+    for hp in hp_set:
+        for vp in vp_set:
+            pair = (hp, vp)
+            if pair not in positives:
+                triple_neg.append((hp, vp, 0))
+    print("Number of negatives: %d" % (len(triple_neg)))
+
+    if option == 'train':
+        triple_pos = np.repeat(np.array(triple_pos), len(triple_neg)//len(triple_pos), axis = 0)
+        triples = np.concatenate((triple_pos, np.array(triple_neg)), axis=0)
+        np.random.shuffle(triples)
+        return triples
+    if option == 'val':
+        np.random.shuffle(triple_neg)
+        triples = np.concatenate((np.array(triple_pos), np.array(triple_neg[:int(0.1*len(triple_neg))])), axis=0)
+    else:
+        triples = np.concatenate((np.array(triple_pos), np.array(triple_neg)), axis=0)
+    return triples, numPos
     
 
 
