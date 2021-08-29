@@ -28,7 +28,7 @@ seq2t = s2t('vec5_CTC.txt')
 hidden_dim = 50
 dim = seq2t.dim
 
-epochs = 5
+epochs = 10
 num_gpus = 1
 batch_size = 200*num_gpus
 steps = 1000
@@ -46,7 +46,7 @@ open_preds = open(preds_file, "w")
 open_preds.close()
 
 swissprot_file = '../data/swissprot-proteome.tab'
-hpi_file = '../data/train_1000.txt'
+# hpi_file = '../data/train_1000.txt'
 hpi_file = '../data/train.txt'
 
 embed_dict = read_embedding(embedding_file)
