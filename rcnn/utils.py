@@ -5,6 +5,8 @@ import pandas as pd
 import tensorflow as tf
 import logging
 import math
+import random
+from sklearn.model_selection import train_test_split
 
 from keras.models import Model, load_model
 from keras.layers import (
@@ -177,6 +179,48 @@ def get_triple_without_family(positives, hp_set, vp_set, option):
     else:
         triples = np.concatenate((np.array(triple_pos), np.array(triple_neg)), axis=0)
     return triples, numPos
+
+
+def get_triples_without_family(train_positives, test_postives, hp_set, vp_set_train, vp_set_test):
+    triple_pos = [(items[0], items[1], 1) for items in train_positives]
+    numPos = len(train_positives)
+    print("Number of positives in %s: %d" % ("train+val", numPos))
+
+    triple_neg = []
+    for hp in hp_set:
+        for vp in vp_set_train:
+            pair = (hp, vp)
+            if pair not in train_positives:
+                triple_neg.append((hp, vp, 0))
+
+    triple_neg = random.choices(triple_neg, k=len(triple_neg) // 10)
+    print("Number of negatives: %d" % (len(triple_neg)))
+
+    triple_pos = np.repeat(np.array(triple_pos), len(triple_neg)//len(triple_pos), axis = 0)
+    triples = np.concatenate((triple_pos, np.array(triple_neg)), axis=0)
+    np.random.shuffle(triples)
+    train_triples, val_triples = train_test_split(triples, test_size=0.1)
+
+
+    triple_pos = [(items[0], items[1], 1) for items in test_positives]
+    numPos = len(test_postives)
+    print("Number of positives in %s: %d" % ("train+val", numPos))
+
+    triple_neg = []
+    for hp in hp_set:
+        for vp in vp_set_test:
+            pair = (hp, vp)
+            if pair not in test_postives:
+                triple_neg.append((hp, vp, 0))
+
+    triple_neg = random.choices(triple_neg, k=len(triple_neg) // 10)
+    print("Number of negatives: %d" % (len(triple_neg)))
+
+    triple_pos = np.repeat(np.array(triple_pos), len(triple_neg)//len(triple_pos), axis = 0)
+    test_triples = np.concatenate((triple_pos, np.array(triple_neg)), axis=0)
+    np.random.shuffle(test_triples)
+
+    return train_triples, val_triples, test_triples
     
 
 

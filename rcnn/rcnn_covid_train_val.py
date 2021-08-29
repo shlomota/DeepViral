@@ -89,7 +89,7 @@ with open(cov_prot_file, 'r') as f:
         items = line.strip().split(',')
         vp_dict[items[0] + items[1]] = items[2]
 
-positives = set()
+train_positives = set()
 vp2numPos = {}
 with open(train_file, 'r') as f:
     next(f)
@@ -100,13 +100,13 @@ with open(train_file, 'r') as f:
         if vp_key not in vp_dict or hp not in hp_set:
             continue
         prot2embed[vp_key] = np.array(seq2t.embed_normalized(vp_dict[vp_key], seq_size))
-        positives.add((hp, vp_key))
+        train_positives.add((hp, vp_key))
         if vp_key not in vp2numPos:
             vp2numPos[vp_key] = 0
         vp2numPos[vp_key] += 1
-vp_set = set(vp2numPos.keys())
-print('Number of positives: ', len(positives))
-print('Number of viral proteins: ', len(vp_set))
+train_vps = set(vp2numPos.keys())
+print('Number of positives: ', len(train_positives))
+print('Number of train viral proteins: ', len(train_vps))
 
 test_positives = set()
 test_vp2numPos = {}
@@ -137,17 +137,19 @@ K.set_session(sess)
 counter = 0
 K.clear_session()
 
-indices = np.random.choice(len(positives), size = int(len(positives)/5), replace=False)
-val_positives = {tuple(v) for v in np.take(np.array(list(positives)), indices, axis=0)}
-train_positives = positives - val_positives
+# indices = np.random.choice(len(positives), size = int(len(positives)/5), replace=False)
+# val_positives = {tuple(v) for v in np.take(np.array(list(positives)), indices, axis=0)}
+# train_positives = positives - val_positives
+#
+# val_vps = {p[1] for p in val_positives}
+# train_vps = {p[1] for p in train_positives}
+# print("Number of viral proteins in train, val, test: ", len(train_vps), len(val_vps), len(test_vps))
+#
+# triple_train = get_triple_without_family(train_positives, hp_set, train_vps, 'train')
+# triple_val, numPos_val = get_triple_without_family(val_positives, hp_set, val_vps,  'val')
+# triple_test, numPos_test = get_triple_without_family(test_positives, hp_set, test_vps, 'test')
 
-val_vps = {p[1] for p in val_positives}
-train_vps = {p[1] for p in train_positives}
-print("Number of viral proteins in train, val, test: ", len(train_vps), len(val_vps), len(test_vps))
-
-triple_train = get_triple_without_family(train_positives, hp_set, train_vps, 'train')
-triple_val, numPos_val = get_triple_without_family(val_positives, hp_set, val_vps,  'val')
-triple_test, numPos_test = get_triple_without_family(test_positives, hp_set, test_vps, 'test')
+triple_train, triple_val, triple_test = get_triples_without_family(train_positives, test_positives, hp_set, train_vps, test_vps)
 print("Number of triples in train, val, test", len(triple_train), len(triple_val), len(triple_test))
 
 # todo: restore
@@ -186,7 +188,7 @@ for i in range(epochs):
 
     val_acc = accuracy_score(y_true, (y_score>THRESH).astype(np.int))
     val_auc = roc_auc_score(y_true, y_score)
-    print('Validation ROCAUC: %.3f, acc: %.3f', val_auc, val_acc)
+    print('Validation ROCAUC: %.3f, acc: %.3f' % (val_auc, val_acc))
 
     #test
     y_score = model.predict_generator(generator=test_gen, verbose=2,
@@ -196,4 +198,4 @@ for i in range(epochs):
 
     test_acc = accuracy_score(y_true, (y_score>THRESH).astype(np.int))
     test_auc = roc_auc_score(y_true, y_score)
-    print('Validation ROCAUC: %.3f, acc: %.3f', test_auc, test_acc)
+    print('Test ROCAUC: %.3f, acc: %.3f' % (val_auc, val_acc))
