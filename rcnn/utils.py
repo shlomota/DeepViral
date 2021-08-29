@@ -7,6 +7,7 @@ import logging
 import math
 import random
 from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
 
 from keras.models import Model, load_model
 from keras.layers import (
@@ -19,6 +20,7 @@ from keras.callbacks import ModelCheckpoint, EarlyStopping, CSVLogger
 from sklearn.metrics import accuracy_score, roc_auc_score, precision_score, recall_score
 from keras.utils import multi_gpu_model, Sequence, np_utils
 
+
 def get_aaindex(swissprot_file, hpi_file):
     haaletter = set()
     with open(swissprot_file, 'r') as f:
@@ -30,7 +32,7 @@ def get_aaindex(swissprot_file, hpi_file):
     haaletter = list(haaletter)
     for i in range(len(haaletter)):
         haaindex[haaletter[i]] = i + 1
-        
+
     vaaletter = set()
     with open(hpi_file, 'r') as f:
         next(f)
@@ -42,6 +44,7 @@ def get_aaindex(swissprot_file, hpi_file):
     for i in range(len(vaaletter)):
         vaaindex[vaaletter[i]] = i + 1
     return haaindex, vaaindex
+
 
 def get_params():
     pi = 11
@@ -62,10 +65,12 @@ def get_params():
     print('Params:', params)
     return params
 
-def repeat_to_length(s, length):
-    return (s * (length//len(s) + 1))[:length]
 
-def to_onehot(seq, aaindex, MAXLEN = 1000, repeat=True):
+def repeat_to_length(s, length):
+    return (s * (length // len(s) + 1))[:length]
+
+
+def to_onehot(seq, aaindex, MAXLEN=1000, repeat=True):
     onehot = np.zeros((MAXLEN, 22), dtype=np.int32)
     original_len = min(MAXLEN, len(seq))
     if repeat == True:
@@ -75,18 +80,20 @@ def to_onehot(seq, aaindex, MAXLEN = 1000, repeat=True):
     onehot[original_len:, 0] = 1
     return onehot
 
+
 def read_fasta(filename, unip2seq, vp2taxon, vp=False):
-    seqs = SeqIO.parse(filename,'fasta')
+    seqs = SeqIO.parse(filename, 'fasta')
     for fasta in seqs:
         name, sequence = fasta.id, str(fasta.seq)
         unip = name.split("|")[1]
         unip2seq[unip] = sequence
         if vp == True:
             vp2taxon[unip] = fasta.description.split('OX=')[1].split(' ')[0]
-    
+
+
 def get_index_fasta(file, unip2seq):
     aaletter = set()
-    seqs = SeqIO.parse(file,'fasta')
+    seqs = SeqIO.parse(file, 'fasta')
     for fasta in seqs:
         name, sequence = fasta.id, str(fasta.seq)
         unip = name.split("|")[1]
@@ -99,14 +106,16 @@ def get_index_fasta(file, unip2seq):
         aaindex[aaletter[i]] = i + 1
     return aaindex
 
+
 def read_embedding(embedding_file):
-    data = pd.read_csv(embedding_file, header = None, sep = ' ', skiprows=1)
+    data = pd.read_csv(embedding_file, header=None, sep=' ', skiprows=1)
     embds_data = data.values
-    embed_dict = dict(zip(embds_data[:,0],embds_data[:,1:-1]))
+    embed_dict = dict(zip(embds_data[:, 0], embds_data[:, 1:-1]))
     print('finished reading embeddings')
     return embed_dict
 
-def read_swissprot(swissprot_file, embed_dict, haaindex, first=True, MAXLEN = 1000):
+
+def read_swissprot(swissprot_file, embed_dict, haaindex, first=True, MAXLEN=1000):
     hp_set = set()
     prot2embed = {}
     with open(swissprot_file, 'r') as f:
@@ -121,7 +130,8 @@ def read_swissprot(swissprot_file, embed_dict, haaindex, first=True, MAXLEN = 10
             prot2embed[items[0]] = to_onehot(items[3], haaindex)
     print('Number of host proteins: ', len(hp_set))
     return hp_set, prot2embed
-        
+
+
 def get_triple(positives, families, hp_set, vp_set, vp2patho, option):
     positives_set = set()
     triple_pos = []
@@ -131,7 +141,7 @@ def get_triple(positives, families, hp_set, vp_set, vp2patho, option):
             triple_pos.append((items[0], items[1], items[2], 1))
     numPos = len(positives_set)
     print("Number of positives in %s families: %d" % (option, numPos))
-    
+
     triple_neg = []
     for hp in hp_set:
         for vp in vp_set:
@@ -139,21 +149,22 @@ def get_triple(positives, families, hp_set, vp_set, vp2patho, option):
             if pair not in positives_set:
                 triple_neg.append((hp, vp, vp2patho[vp], 0))
 
-    #TODO: remove
+    # TODO: remove
     import random
     triple_neg = random.choices(triple_neg, k=len(triple_neg) // 10)
 
     if option == 'train':
-        triple_pos = np.repeat(np.array(triple_pos), len(triple_neg)//len(triple_pos), axis = 0)
+        triple_pos = np.repeat(np.array(triple_pos), len(triple_neg) // len(triple_pos), axis=0)
         triples = np.concatenate((triple_pos, np.array(triple_neg)), axis=0)
         np.random.shuffle(triples)
         return triples
     if option == 'val':
         np.random.shuffle(triple_neg)
-        triples = np.concatenate((np.array(triple_pos), np.array(triple_neg[:int(0.1*len(triple_neg))])), axis=0)
-    else: 
+        triples = np.concatenate((np.array(triple_pos), np.array(triple_neg[:int(0.1 * len(triple_neg))])), axis=0)
+    else:
         triples = np.concatenate((np.array(triple_pos), np.array(triple_neg)), axis=0)
     return triples, numPos
+
 
 def get_triple_without_family(positives, hp_set, vp_set, option):
     triple_pos = [(items[0], items[1], 1) for items in positives]
@@ -169,13 +180,13 @@ def get_triple_without_family(positives, hp_set, vp_set, option):
     print("Number of negatives: %d" % (len(triple_neg)))
 
     if option == 'train':
-        triple_pos = np.repeat(np.array(triple_pos), len(triple_neg)//len(triple_pos), axis = 0)
+        triple_pos = np.repeat(np.array(triple_pos), len(triple_neg) // len(triple_pos), axis=0)
         triples = np.concatenate((triple_pos, np.array(triple_neg)), axis=0)
         np.random.shuffle(triples)
         return triples
     if option == 'val':
         np.random.shuffle(triple_neg)
-        triples = np.concatenate((np.array(triple_pos), np.array(triple_neg[:int(0.1*len(triple_neg))])), axis=0)
+        triples = np.concatenate((np.array(triple_pos), np.array(triple_neg[:int(0.1 * len(triple_neg))])), axis=0)
     else:
         triples = np.concatenate((np.array(triple_pos), np.array(triple_neg)), axis=0)
     return triples, numPos
@@ -196,11 +207,10 @@ def get_triples_without_family(train_positives, test_positives, hp_set, vp_set_t
     triple_neg = random.choices(triple_neg, k=len(triple_neg) // 10)
     print("Number of negatives: %d" % (len(triple_neg)))
 
-    triple_pos = np.repeat(np.array(triple_pos), len(triple_neg)//len(triple_pos), axis = 0)
+    triple_pos = np.repeat(np.array(triple_pos), len(triple_neg) // len(triple_pos), axis=0)
     triples = np.concatenate((triple_pos, np.array(triple_neg)), axis=0)
     np.random.shuffle(triples)
     train_triples, val_triples = train_test_split(triples, test_size=0.1)
-
 
     # same thing for test data
     triple_pos = [(items[0], items[1], 1) for items in test_positives]
@@ -217,17 +227,29 @@ def get_triples_without_family(train_positives, test_positives, hp_set, vp_set_t
     triple_neg = random.choices(triple_neg, k=len(triple_neg) // 10)
     print("Number of negatives: %d" % (len(triple_neg)))
 
-    triple_pos = np.repeat(np.array(triple_pos), len(triple_neg)//len(triple_pos), axis = 0)
+    triple_pos = np.repeat(np.array(triple_pos), len(triple_neg) // len(triple_pos), axis=0)
     test_triples = np.concatenate((triple_pos, np.array(triple_neg)), axis=0)
     np.random.shuffle(test_triples)
 
     return train_triples, val_triples, test_triples
-    
 
 
+def plot_train_history(history):
+    plt.plot(history.history['accuracy'])
+    plt.plot(history.history['val_accuracy'])
+    plt.title('model accuracy')
+    plt.ylabel('accuracy')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'test'], loc='upper left')
+    plt.show()
 
-
-
+    plt.plot(history.history['loss'])
+    plt.plot(history.history['val_loss'])
+    plt.title('model loss')
+    plt.ylabel('loss')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'test'], loc='upper left')
+    plt.show()
 
 # def get_vtPos(positives, families, triples):
 #     positives_set = set()
@@ -255,7 +277,7 @@ def get_triples_without_family(train_positives, test_positives, hp_set, vp_set_t
 #                 prot2embed[hp] = to_onehot(hss[i], haaindex)
 #                 prot2embed[vp] = to_onehot(vss[j], vaaindex)
 #                 splited.append((hp, vp, pos[2]))
-                
+
 # def split_seq_test(splited, triples, unip2seq, prot2embed, haaindex, vaaindex, MAXLEN=1000):
 #     counts = []
 #     for pos in triples:

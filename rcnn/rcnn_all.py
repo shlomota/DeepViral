@@ -18,6 +18,7 @@ import numpy as np
 import os
 import tensorflow as tf
 import keras.backend.tensorflow_backend as KTF
+from rcnn.utils import plot_train_history
 from utils import *
 from models import *
 
@@ -200,6 +201,7 @@ for i in range(epochs):
                         max_queue_size = 50,
                         use_multiprocessing=False,
                         workers = 1)
+    plot_train_history(history)
 
     y_score = model.predict_generator(generator=train_gen, verbose=2,
                                        steps=int(np.ceil(len(triple_train)/batch_size)),
