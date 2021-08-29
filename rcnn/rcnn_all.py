@@ -21,6 +21,7 @@ import keras.backend.tensorflow_backend as KTF
 from utils import *
 from models import *
 
+THRESH = 0.5
 seq_size = 1000
 MAXLEN = 1000
 seq2t = s2t('vec5_CTC.txt')
@@ -46,6 +47,7 @@ open_preds.close()
 
 swissprot_file = '../data/swissprot-proteome.tab'
 hpi_file = '../data/train_1000.txt'
+hpi_file = '../data/train.txt'
 
 embed_dict = read_embedding(embedding_file)
 
@@ -174,12 +176,16 @@ for family in train_families:
 # val_vps = vp_set - family2vp[test_family] - train_vps
 val_vps = train_vps
 
-print(1)
-triple_train = get_triple(positives, train_families, hp_set, train_vps, vp2patho, 'train')
-print(2)
-triple_val, numPos_val = get_triple(positives, val_families, hp_set, val_vps,  vp2patho, 'val')
+# print(1)
+# triple_train = get_triple(positives, train_families, hp_set, train_vps, vp2patho, 'train')
+# print(2)
+# triple_val, numPos_val = get_triple(positives, val_families, hp_set, val_vps,  vp2patho, 'val')
+
+# get_triples_without_family()
+triple_train, triple_val, triple_test = get_triples_without_family(positives, positives, hp_set, vp_set, vp_set, do_test=False)
 print(3)
 print("Number of triples in train", len(triple_train))
+print("Number of triples in test", len(triple_test))
 
 # todo: restore
 model = None
@@ -188,9 +194,9 @@ adam = Adam(lr=0.001, amsgrad=True, epsilon=1e-6)
 rms = RMSprop(lr=0.001)
 model.compile(optimizer=adam, loss='binary_crossentropy', metrics=['accuracy'])
 
-train_gen, val_gen, test_gen = get_generators(triple_train, triple_train, triple_train, batch_size, prot2embed, option, embed_dict, MAXLEN=seq_size)
+train_gen, val_gen, test_gen = get_generators(triple_train, triple_val, triple_train, batch_size, prot2embed, option, embed_dict, MAXLEN=seq_size)
 
-val_maxauc = 0
+test_maxauc = 0
 for i in range(epochs):
     print('taxon ', counter, ' epoch ', i)
     history = model.fit_generator(generator=train_gen,
@@ -205,14 +211,25 @@ for i in range(epochs):
                                        steps=int(np.ceil(len(triple_train)/batch_size)),
                                         max_queue_size = 50, workers = 1)
 
-    y_true = np.concatenate((np.ones(numPos_val), np.zeros(len(triple_train) - numPos_val)))
+    # y_true = np.concatenate((np.ones(numPos_val), np.zeros(len(triple_train) - numPos_val)))
     y_true = np.array([int(example[-1]) for example in triple_train])
+    train_acc = accuracy_score(y_true, (y_score>THRESH).astype(int))
+    train_auc = roc_auc_score(y_true, y_score)
+    print('Test ROCAUC: %.3f, acc: %.3f' % (train_auc, train_acc))
 
-    val_auc = roc_auc_score(y_true, y_score)
-    print('The ROCAUC for the val families in this epoch is ', val_auc)
-    if val_auc > val_maxauc:
+
+    y_score = model.predict_generator(generator=test_gen, verbose=2,
+                                      steps=int(np.ceil(len(triple_test)/batch_size)),
+                                      max_queue_size = 50, workers = 1)
+    y_true = np.array([int(example[-1]) for example in triple_test])
+
+    test_acc = accuracy_score(y_true, (y_score>THRESH).astype(int))
+    test_auc = roc_auc_score(y_true, y_score)
+    print('Test ROCAUC: %.3f, acc: %.3f' % (test_auc, test_acc))
+
+    if test_auc > test_maxauc:
         print('Saving current model...')
         model.save("/content/drive/My Drive/" + model_file)
-        val_maxauc = val_auc
+        test_maxauc = test_auc
 
 

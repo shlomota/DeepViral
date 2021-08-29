@@ -181,7 +181,7 @@ def get_triple_without_family(positives, hp_set, vp_set, option):
     return triples, numPos
 
 
-def get_triples_without_family(train_positives, test_positives, hp_set, vp_set_train, vp_set_test):
+def get_triples_without_family(train_positives, test_positives, hp_set, vp_set_train, vp_set_test, do_test=True):
     triple_pos = [(items[0], items[1], 1) for items in train_positives]
     numPos = len(train_positives)
     print("Number of positives in %s: %d" % ("train+val", numPos))
@@ -211,23 +211,26 @@ def get_triples_without_family(train_positives, test_positives, hp_set, vp_set_t
 
 
     # same thing for test data
-    triple_pos = [(items[0], items[1], 1) for items in test_positives]
-    numPos = len(test_positives)
-    print("Number of positives in %s: %d" % ("test", numPos))
+    if do_test:
+        triple_pos = [(items[0], items[1], 1) for items in test_positives]
+        numPos = len(test_positives)
+        print("Number of positives in %s: %d" % ("test", numPos))
 
-    triple_neg = []
-    for hp in hp_set:
-        for vp in vp_set_test:
-            pair = (hp, vp)
-            if pair not in test_positives:
-                triple_neg.append((hp, vp, 0))
+        triple_neg = []
+        for hp in hp_set:
+            for vp in vp_set_test:
+                pair = (hp, vp)
+                if pair not in test_positives:
+                    triple_neg.append((hp, vp, 0))
 
-    triple_neg = random.choices(triple_neg, k=len(triple_neg) // 10)
-    print("Number of negatives: %d" % (len(triple_neg)))
+        triple_neg = random.choices(triple_neg, k=len(triple_neg) // 10)
+        print("Number of negatives: %d" % (len(triple_neg)))
 
-    triple_pos = np.repeat(np.array(triple_pos), len(triple_neg)//len(triple_pos), axis = 0)
-    test_triples = np.concatenate((triple_pos, np.array(triple_neg)), axis=0)
-    np.random.shuffle(test_triples)
+        triple_pos = np.repeat(np.array(triple_pos), len(triple_neg)//len(triple_pos), axis = 0)
+        test_triples = np.concatenate((triple_pos, np.array(triple_neg)), axis=0)
+        np.random.shuffle(test_triples)
+    else:
+        test_triples = val_triples
 
     return train_triples, val_triples, test_triples
     
