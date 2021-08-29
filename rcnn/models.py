@@ -19,9 +19,9 @@ from keras.utils import multi_gpu_model, Sequence, np_utils
 
 def get_generators(triple_train, triple_val, triple_test, batch_size, prot2embed, option, embed_dict=None, MAXLEN=2000):
     if option == "seq":
-        generator = seq_Generator(triple_train[:,0:2], triple_train[:,3], batch_size, prot2embed, MAXLEN)
-        val_generator = seq_Generator(triple_val[:,0:2], triple_val[:,3], batch_size, prot2embed, MAXLEN)
-        test_generator = seq_Generator(triple_test[:,0:2], triple_test[:,3], batch_size, prot2embed, MAXLEN)
+        generator = seq_Generator(triple_train[:,0:2], triple_train[:,2], batch_size, prot2embed, MAXLEN)
+        val_generator = seq_Generator(triple_val[:,0:2], triple_val[:,2], batch_size, prot2embed, MAXLEN)
+        test_generator = seq_Generator(triple_test[:,0:2], triple_test[:,2], batch_size, prot2embed, MAXLEN)
     elif option == "joint":
         generator = joint_Generator(triple_train[:,0:3], triple_train[:,3], batch_size, prot2embed, embed_dict)
         val_generator = joint_Generator(triple_val[:,0:3], triple_val[:,3], batch_size, prot2embed, embed_dict)
