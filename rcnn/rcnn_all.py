@@ -77,7 +77,7 @@ with open(hpi_file, 'r') as f:
     next(f)
     for line in f:
         items = line.strip().split('\t')
-        if items[0] not in hp_set or len(items) < 7:
+        if items[0] not in hp_set:
             continue
         if float(items[6]) >= float(thres):
             hp = items[0]

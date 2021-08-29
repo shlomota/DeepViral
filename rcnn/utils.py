@@ -243,6 +243,13 @@ def get_triples_without_family(train_positives, test_positives, hp_set, vp_set_t
 
     return train_triples, val_triples, test_triples
 
+    plt.plot(history.history['loss'])
+    plt.plot(history.history['val_loss'])
+    plt.title('model loss')
+    plt.ylabel('loss')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'test'], loc='upper left')
+    plt.show()
 
 def plot_train_history(history):
     plt.plot(history.history['accuracy'])
