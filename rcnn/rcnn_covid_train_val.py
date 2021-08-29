@@ -215,12 +215,13 @@ for i in range(epochs):
                         use_multiprocessing=False,
                         workers = 1)
 
-    y_score = model.predict_generator(generator=train_gen, verbose=2,
-                                       steps=int(np.ceil(len(triple_train)/batch_size)),
+    # compute metrics on validation data
+    y_score = model.predict_generator(generator=triple_val, verbose=2,
+                                       steps=int(np.ceil(len(triple_val)/batch_size)),
                                         max_queue_size = 50, workers = 1)
+    # y_true = np.concatenate((np.ones(numPos_val), np.zeros(len(triple_train) - numPos_val)))
+    y_true = np.array([int(example[-1]) for example in triple_val])
 
-    y_true = np.concatenate((np.ones(numPos_val), np.zeros(len(triple_train) - numPos_val)))
-    y_true = np.array([int(example[-1]) for example in triple_train])
-
+    val_acc = accuracy_score(y_true, y_score)
     val_auc = roc_auc_score(y_true, y_score)
-    print('The ROCAUC for the val families in this epoch is ', val_auc)
+    print('Validation ROCAUC: %.3f, acc: %.3f', val_auc, val_acc)
