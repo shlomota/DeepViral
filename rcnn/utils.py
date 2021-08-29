@@ -186,6 +186,7 @@ def get_triples_without_family(train_positives, test_positives, hp_set, vp_set_t
     numPos = len(train_positives)
     print("Number of positives in %s: %d" % ("train+val", numPos))
 
+
     triple_neg = []
     for hp in hp_set:
         for vp in vp_set_train:
