@@ -195,11 +195,18 @@ def get_triples_without_family(train_positives, test_positives, hp_set, vp_set_t
 
     triple_neg = random.choices(triple_neg, k=len(triple_neg) // 10)
     print("Number of negatives: %d" % (len(triple_neg)))
+    train_triple_neg, val_triple_neg = train_test_split(triple_neg, test_size=0.1)
+    train_triple_pos, val_triple_pos = train_test_split(triple_pos, test_size=0.1)
 
-    triple_pos = np.repeat(np.array(triple_pos), len(triple_neg)//len(triple_pos), axis = 0)
-    triples = np.concatenate((triple_pos, np.array(triple_neg)), axis=0)
-    np.random.shuffle(triples)
-    train_triples, val_triples = train_test_split(triples, test_size=0.1)
+
+    train_triple_pos = np.repeat(np.array(train_triple_pos), len(train_triple_neg)//len(train_triple_pos), axis = 0)
+    train_triples = np.concatenate((train_triple_pos, np.array(train_triple_neg)), axis=0)
+    np.random.shuffle(train_triples)
+
+    val_triple_pos = np.repeat(np.array(val_triple_pos), len(val_triple_neg)//len(val_triple_pos), axis = 0)
+    val_triples = np.concatenate((val_triple_pos, np.array(val_triple_neg)), axis=0)
+    np.random.shuffle(train_triples)
+
 
 
     # same thing for test data
