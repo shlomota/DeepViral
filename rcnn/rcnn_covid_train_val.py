@@ -47,8 +47,8 @@ steps = 1000
 
 thres = '0'
 option = 'seq'
-model_num = sys.argv[2]
-embedding_file = sys.argv[1]
+model_num = sys.argv[1]
+embedding_file = "../data/julia_embed_cleaned.txt"
 print("option: ", option, "threshold: ", thres)
 
 # model_file = f'model_rcnn_all_01.h5'
@@ -61,8 +61,8 @@ swissprot_file = '../data/swissprot-proteome.tab'
 cov_prot_file = '../data/new/cov_protein_sequences.csv'
 # hpi_file = '../data/train_1000.txt'
 
-train = sys.argv[4]
-test = sys.argv[5]
+train = sys.argv[3]
+test = sys.argv[4]
 train_file = f'../data/new/train/{train}.csv'  # '../data/new/train/unthresholded.csv'
 test_file = f'../data/new/test/{test}.csv'     # '../data/new/test/2b.csv'
 
@@ -157,7 +157,7 @@ model = load_model(model_file)
 
 # Frozen the weights of the first CNN layers
 # frozen_layer_index = 20 # -5, -8, -12
-frozen_layer_index = int(sys.argv[3])
+frozen_layer_index = int(sys.argv[2])
 for l in model.layers[0:frozen_layer_index]:
     l.trainable=False
 
