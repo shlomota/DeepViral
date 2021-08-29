@@ -189,15 +189,13 @@ for i in range(epochs):
     val_acc = accuracy_score(y_true, (y_score>THRESH).astype(int))
     val_auc = roc_auc_score(y_true, y_score)
     print('Validation ROCAUC: %.3f, acc: %.3f' % (val_auc, val_acc))
-    print(len(triple_val))
 
     #test
     y_score = model.predict_generator(generator=test_gen, verbose=2,
                                       steps=int(np.ceil(len(triple_test)/batch_size)),
                                       max_queue_size = 50, workers = 1)
     y_true = np.array([int(example[-1]) for example in triple_test])
-    print(len(triple_test))
 
     test_acc = accuracy_score(y_true, (y_score>THRESH).astype(int))
     test_auc = roc_auc_score(y_true, y_score)
-    print('Test ROCAUC: %.3f, acc: %.3f' % (val_auc, val_acc))
+    print('Test ROCAUC: %.3f, acc: %.3f' % (test_auc, test_acc))
