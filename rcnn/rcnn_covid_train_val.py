@@ -186,7 +186,7 @@ for i in range(epochs):
                                         max_queue_size = 50, workers = 1)
     y_true = np.array([int(example[-1]) for example in triple_val])
 
-    val_acc = accuracy_score(y_true, (y_score>THRESH).astype(np.int))
+    val_acc = accuracy_score(y_true, (y_score>THRESH).astype(int))
     val_auc = roc_auc_score(y_true, y_score)
     print('Validation ROCAUC: %.3f, acc: %.3f' % (val_auc, val_acc))
 
@@ -196,6 +196,6 @@ for i in range(epochs):
                                       max_queue_size = 50, workers = 1)
     y_true = np.array([int(example[-1]) for example in triple_test])
 
-    test_acc = accuracy_score(y_true, (y_score>THRESH).astype(np.int))
+    test_acc = accuracy_score(y_true, (y_score>THRESH).astype(int))
     test_auc = roc_auc_score(y_true, y_score)
     print('Test ROCAUC: %.3f, acc: %.3f' % (val_auc, val_acc))

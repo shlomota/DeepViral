@@ -202,6 +202,7 @@ def get_triples_without_family(train_positives, test_positives, hp_set, vp_set_t
     train_triples, val_triples = train_test_split(triples, test_size=0.1)
 
 
+    # same thing for test data
     triple_pos = [(items[0], items[1], 1) for items in test_positives]
     numPos = len(test_positives)
     print("Number of positives in %s: %d" % ("test", numPos))
