@@ -210,7 +210,7 @@ def get_triples_without_family(train_positives, test_positives, hp_set, vp_set_t
     for hp in hp_set:
         for vp in vp_set_test:
             pair = (hp, vp)
-            if pair not in test_postives:
+            if pair not in test_positives:
                 triple_neg.append((hp, vp, 0))
 
     triple_neg = random.choices(triple_neg, k=len(triple_neg) // 10)
