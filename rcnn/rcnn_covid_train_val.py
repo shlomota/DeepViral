@@ -177,7 +177,7 @@ for i in range(epochs):
                         workers = 1)
 
     # compute metrics on validation data
-    y_score = model.predict_generator(generator=triple_val, verbose=2,
+    y_score = model.predict_generator(generator=val_gen, verbose=2,
                                        steps=int(np.ceil(len(triple_val)/batch_size)),
                                         max_queue_size = 50, workers = 1)
     # y_true = np.concatenate((np.ones(numPos_val), np.zeros(len(triple_train) - numPos_val)))
