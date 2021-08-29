@@ -34,7 +34,8 @@ steps = 1000
 
 thres = '0'
 option = 'seq'
-tid = sys.argv[2]
+# tid = sys.argv[2]
+tid = 0
 embedding_file = sys.argv[1]
 print("option: ", option, "threshold: ", thres)
 
