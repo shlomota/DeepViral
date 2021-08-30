@@ -61,7 +61,7 @@ def get_h_and_v_proteins(interactions_file, vp_set, hp_set):
             if vp_key not in vp2numPos:
                 vp2numPos[vp_key] = 0
             vp2numPos[vp_key] += 1
-    return positives, vp2numPos
+    return list(positives), vp2numPos
 
 
 def get_non_frozen_indexes(indexes_str):
