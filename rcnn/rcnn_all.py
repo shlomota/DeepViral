@@ -29,8 +29,8 @@ seq2t = s2t('vec5_CTC.txt')
 hidden_dim = 50
 dim = seq2t.dim
 
-# epochs = 10
-epochs = 1
+epochs = 10
+# epochs = 1
 num_gpus = 1
 batch_size = 200*num_gpus
 steps = 1000
