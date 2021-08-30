@@ -188,6 +188,7 @@ model.compile(optimizer=adam, loss='binary_crossentropy', metrics=['accuracy'])
 train_gen, val_gen, test_gen = get_generators(triple_train, triple_val, triple_test, batch_size, prot2embed, option,
                                               MAXLEN=seq_size)
 
+train_acc, test_acc, train_loss, test_loss = [], [], [], []
 val_maxauc = 0
 for i in range(epochs):
     print('taxon ', counter, ' epoch ', i)
@@ -197,8 +198,9 @@ for i in range(epochs):
                                   verbose=2,
                                   max_queue_size=50,
                                   use_multiprocessing=False,
-                                  workers=1)
-    plot_train_history(history)
+                                  workers=1,
+                                  validation_data=val_gen)
+
 
     # compute metrics on validation data
     y_score = model.predict_generator(generator=val_gen, verbose=2,
@@ -219,3 +221,12 @@ for i in range(epochs):
     test_acc = accuracy_score(y_true, (y_score > THRESH).astype(int))
     test_auc = roc_auc_score(y_true, y_score)
     print('Test ROCAUC: %.3f, acc: %.3f' % (test_auc, test_acc))
+
+    train_acc += history.history["accuracy"]
+    train_loss += history.history["loss"]
+    test_acc += history.history["val_accuracy"]
+    test_loss += history.history["val_loss"]
+    print(train_acc[-1], train_loss[-1], test_acc[-1], test_loss[-1])
+
+
+plot_train_history(train_acc, test_acc, train_loss, test_loss)

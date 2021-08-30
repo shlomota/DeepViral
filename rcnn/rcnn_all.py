@@ -244,8 +244,4 @@ for i in range(epochs):
         test_maxauc = test_auc
 
 
-history.history["accuracy"] = train_acc
-history.history["val_accuracy"] = test_acc
-history.history["loss"] = train_loss
-history.history["val_loss"] = test_acc
-plot_train_history(history)
+plot_train_history(train_acc, test_acc, train_loss, test_loss)
