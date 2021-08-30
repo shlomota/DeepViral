@@ -174,7 +174,7 @@ model = load_model(model_file)
 
 # Frozen the weights of the first CNN layers
 # frozen_layer_index = 20 # -5, -8, -12
-for i in model.layers:
+for i in range(len(model.layers)):
     if is_in_range(trainable_layers, i):
         continue
     l = model.layers[i]
