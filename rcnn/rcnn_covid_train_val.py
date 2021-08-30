@@ -31,7 +31,6 @@ from utils import *
 from models import *
 import argparse
 import matplotlib.pyplot as plt
-from rcnn.utils import plot_train_history
 
 def get_trainable_indexes(indexes_str):
     indexes_couples = [index_couple.split('-') for index_couple in indexes_str.split(',')]
