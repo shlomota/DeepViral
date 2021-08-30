@@ -54,9 +54,9 @@ def get_h_and_v_proteins(interactions_file, vp_set, hp_set):
         for line in f:
             items = line.strip().split(',')
             vp_key = items[0] + items[1].upper()
+            hp = items[2]
             if vp_key not in vp_set or hp not in hp_set:
                 continue
-            hp = items[2]
             positives.add((hp, vp_key))
             if vp_key not in test_vp2numPos:
                 vp2numPos[vp_key] = 0
