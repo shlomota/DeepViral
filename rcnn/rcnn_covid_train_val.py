@@ -58,7 +58,7 @@ def get_h_and_v_proteins(interactions_file, vp_set, hp_set):
             if vp_key not in vp_set or hp not in hp_set:
                 continue
             positives.add((hp, vp_key))
-            if vp_key not in test_vp2numPos:
+            if vp_key not in vp2numPos:
                 vp2numPos[vp_key] = 0
             vp2numPos[vp_key] += 1
     return positives, vp2numPos
