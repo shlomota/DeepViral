@@ -196,7 +196,7 @@ adam = Adam(lr=0.001, amsgrad=True, epsilon=1e-6)
 rms = RMSprop(lr=0.001)
 model.compile(optimizer=adam, loss='binary_crossentropy', metrics=['accuracy'])
 
-train_gen, val_gen, test_gen = get_generators(triple_train, triple_val, triple_train, batch_size, prot2embed, option, embed_dict, MAXLEN=seq_size)
+train_gen, val_gen, test_gen = get_generators(triple_train, triple_val, triple_test, batch_size, prot2embed, option, embed_dict, MAXLEN=seq_size)
 
 test_maxauc = 0
 train_acc, test_acc, train_loss, test_loss = [], [], [], []
@@ -227,9 +227,6 @@ for i in range(epochs):
                                       steps=int(np.ceil(len(triple_test)/batch_size)),
                                       max_queue_size = 50, workers = 1)
     y_true = np.array([int(example[-1]) for example in triple_test])
-    print(len(triple_test))
-    print(len(y_true))
-    print(len(y_score))
     test_acc = accuracy_score(y_true, (y_score>THRESH).astype(int))
     test_auc = roc_auc_score(y_true, y_score)
     print('Test ROCAUC: %.3f, acc: %.3f' % (test_auc, test_acc))
@@ -238,6 +235,8 @@ for i in range(epochs):
     train_loss += history.history["loss"]
     test_acc += history.history["val_accuracy"]
     test_loss += history.history["val_loss"]
+
+    print(train_acc[-1], train_loss[-1], test_acc[-1], test_loss[-1])
 
     if test_auc > test_maxauc:
         print('Saving current model...')
