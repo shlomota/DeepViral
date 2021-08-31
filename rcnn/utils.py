@@ -205,7 +205,7 @@ def get_triples_without_family(train_positives, test_positives, hp_set, vp_set_t
             if pair not in train_positives:
                 triple_neg.append((hp, vp, 0))
 
-    triple_neg = random.choices(triple_neg, k=len(triple_neg) // 100)
+    triple_neg = random.choices(triple_neg, k=len(triple_neg) // 10)
     print("Number of negatives: %d" % (len(triple_neg)))
     train_triple_neg, val_triple_neg = train_test_split(triple_neg, test_size=0.1)
     train_triple_pos, val_triple_pos = train_test_split(triple_pos, test_size=0.1)
@@ -232,7 +232,7 @@ def get_triples_without_family(train_positives, test_positives, hp_set, vp_set_t
                 if pair not in test_positives:
                     triple_neg.append((hp, vp, 0))
 
-        triple_neg = random.choices(triple_neg, k=len(triple_neg) // 100)
+        triple_neg = random.choices(triple_neg, k=len(triple_neg) // 10)
         print("Number of negatives: %d" % (len(triple_neg)))
 
         triple_pos = np.repeat(np.array(triple_pos), len(triple_neg)//len(triple_pos), axis = 0)
