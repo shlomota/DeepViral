@@ -243,29 +243,44 @@ def get_triples_without_family(train_positives, test_positives, hp_set, vp_set_t
 
     return train_triples, val_triples, test_triples
 
-    plt.plot(history.history['loss'])
-    plt.plot(history.history['val_loss'])
-    plt.title('model loss')
-    plt.ylabel('loss')
-    plt.xlabel('epoch')
-    plt.legend(['train', 'test'], loc='upper left')
-    plt.show()
 
-def plot_train_history(train_acc, test_acc, train_loss, test_loss):
+def plot_train_history(train_acc, val_acc, train_loss, val_loss, model_name=''):
     plt.plot(train_acc)
-    plt.plot(test_acc)
+    plt.plot(val_acc)
     plt.title('model accuracy')
     plt.ylabel('accuracy')
     plt.xlabel('epoch')
-    plt.legend(['train', 'test'], loc='upper left')
+    plt.legend(['train', 'validation'], loc='upper left')
+    plt.savefig(f'{model_name}_accuracy.png')
     plt.show()
 
     plt.plot(train_loss)
-    plt.plot(test_loss)
+    plt.plot(val_loss)
     plt.title('model loss')
     plt.ylabel('loss')
     plt.xlabel('epoch')
-    plt.legend(['train', 'test'], loc='upper left')
+    plt.legend(['train', 'validation'], loc='upper left')
+    plt.savefig(f'{model_name}_loss.png')
+    plt.show()
+
+
+def plot_learning_results(val_acc, val_auc, test_acc, test_auc, model_name=''):
+    plt.plot(val_acc)
+    plt.plot(test_acc)
+    plt.title('model value and train accuracy')
+    plt.ylabel('accuracy')
+    plt.xlabel('epoch')
+    plt.legend(['validation', 'test'], loc='upper left')
+    plt.savefig(f'{model_name}_val_and_train_accuracy.png')
+    plt.show()
+
+    plt.plot(val_auc)
+    plt.plot(test_auc)
+    plt.title('model roc auc')
+    plt.ylabel('auc')
+    plt.xlabel('epoch')
+    plt.legend(['validation', 'test'], loc='upper left')
+    plt.savefig(f'{model_name}_val_and_test_auc.png')
     plt.show()
 
 # def get_vtPos(positives, families, triples):
