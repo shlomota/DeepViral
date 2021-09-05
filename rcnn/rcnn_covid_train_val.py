@@ -32,9 +32,11 @@ from models import *
 import argparse
 import matplotlib.pyplot as plt
 from utils import plot_train_history, plot_learning_results
+import random
 
 swissprot_file = '../data/swissprot-proteome.tab'
 cov_prot_file = '../data/new/cov_protein_sequences.csv'
+random.seed(42)
 
 
 def get_trainable_indexes(indexes_str):
