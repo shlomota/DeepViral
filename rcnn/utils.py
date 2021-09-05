@@ -269,11 +269,11 @@ def plot_train_history(train_acc, val_acc, train_loss, val_loss, model_name=''):
 def plot_learning_results(val_acc, val_auc, test_acc, test_auc, model_name=''):
     plt.plot(val_acc)
     plt.plot(test_acc)
-    plt.title('model value and train accuracy')
+    plt.title('model val and test accuracy')
     plt.ylabel('accuracy')
     plt.xlabel('epoch')
     plt.legend(['validation', 'test'], loc='upper left')
-    plt.savefig(f'{model_name}_val_and_train_accuracy.png')
+    plt.savefig(f'{model_name}_val_and_test_accuracy.png')
     plt.show()
 
     plt.plot(val_auc)
