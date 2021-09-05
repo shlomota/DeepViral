@@ -27,7 +27,7 @@ import numpy as np
 import os
 import tensorflow as tf
 import keras.backend.tensorflow_backend as KTF
-from utils import  model_num,*
+from utils import *
 from models import *
 import argparse
 import matplotlib.pyplot as plt
