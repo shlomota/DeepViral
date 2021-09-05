@@ -204,7 +204,7 @@ def main():
     parser.add_argument('--epochs', metavar='epochs', type=int, default=5, nargs='?')
     parser.add_argument('--thresh', metavar='thresh', type=float, default=0.5, nargs='?',
                         help='the threshold for comparing accuracy')
-    parser.add_argument('--log_each_epoch', metavar='log_each_epoch', type=bool, default=False)
+    parser.add_argument('--log_each_epoch', metavar='log_each_epoch', type=bool, default=True)
 
     args = parser.parse_args()
     seq_size = args.seq_size
