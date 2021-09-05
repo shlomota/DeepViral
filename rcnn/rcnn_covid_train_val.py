@@ -103,7 +103,7 @@ def fit_model(model, model_num, epochs, batch_size, steps, score_threshold,
 def fine_tune_rcnn(model_file, model_num, epochs, batch_size, steps, score_threshold, option,
                    trainable_layers, seq_size,
                    hp_set, prot2embed,
-                   train_positives, test_positives, train_vps, test_vps, log_each_epoch):
+                   train_positives, test_positives, train_vps, test_vps, log_each_epoch, ratio):
     config = tf.ConfigProto()
     config.gpu_options.allow_growth = True
     config.gpu_options.per_process_gpu_memory_fraction = 0.3
@@ -113,7 +113,8 @@ def fine_tune_rcnn(model_file, model_num, epochs, batch_size, steps, score_thres
     K.clear_session()
     triple_train, triple_val, triple_test = get_triples_without_family(train_positives, test_positives, hp_set,
                                                                        train_vps,
-                                                                       test_vps)
+                                                                       test_vps,
+                                                                       ratio=ratio)
     print("Number of triples:")
     print("\ttrain:", len(triple_train))
     print("\tvalidation:", len(triple_val))
@@ -205,6 +206,7 @@ def main():
     parser.add_argument('--thresh', metavar='thresh', type=float, default=0.5, nargs='?',
                         help='the threshold for comparing accuracy')
     parser.add_argument('--log_each_epoch', metavar='log_each_epoch', type=bool, default=True)
+    parser.add_argument('--ratio', metavar='ratio', type=int, default=10)
 
     args = parser.parse_args()
     seq_size = args.seq_size
@@ -262,10 +264,11 @@ def main():
     print('Number of test positives: ', len(test_positives))
     print('Number of test viral proteins: ', len(test_vps))
 
+
     fine_tune_rcnn(model_file, model_num, epochs, batch_size, steps, score_threshold, option,
                    trainable_layers, seq_size,
                    hp_set, prot2embed,
-                   train_positives, test_positives, train_vps, test_vps, args.log_each_epoch)
+                   train_positives, test_positives, train_vps, test_vps, args.log_each_epoch, args.ratio)
 
 
 if __name__ == "__main__":

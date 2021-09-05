@@ -192,7 +192,7 @@ def get_triple_without_family(positives, hp_set, vp_set, option):
     return triples, numPos
 
 
-def get_triples_without_family(train_positives, test_positives, hp_set, vp_set_train, vp_set_test, do_test=True):
+def get_triples_without_family(train_positives, test_positives, hp_set, vp_set_train, vp_set_test, do_test=True, ratio=10):
     triple_pos = [(items[0], items[1], 1) for items in train_positives]
     numPos = len(train_positives)
     print("Number of positives in %s: %d" % ("train+val", numPos))
@@ -205,7 +205,8 @@ def get_triples_without_family(train_positives, test_positives, hp_set, vp_set_t
             if pair not in train_positives:
                 triple_neg.append((hp, vp, 0))
 
-    triple_neg = random.choices(triple_neg, k=len(triple_neg) // 10)
+    # triple_neg = random.choices(triple_neg, k=len(triple_neg) // 10)
+    triple_neg = random.choices(triple_neg, k=len(triple_neg) // ratio)
     print("Number of negatives: %d" % (len(triple_neg)))
     train_triple_neg, val_triple_neg = train_test_split(triple_neg, test_size=0.1)
     train_triple_pos, val_triple_pos = train_test_split(triple_pos, test_size=0.1)
@@ -232,7 +233,8 @@ def get_triples_without_family(train_positives, test_positives, hp_set, vp_set_t
                 if pair not in test_positives:
                     triple_neg.append((hp, vp, 0))
 
-        triple_neg = random.choices(triple_neg, k=len(triple_neg) // 10)
+        # triple_neg = random.choices(triple_neg, k=len(triple_neg) // 10)
+        triple_neg = random.choices(triple_neg, k=len(triple_neg) // ratio)
         print("Number of negatives: %d" % (len(triple_neg)))
 
         triple_pos = np.repeat(np.array(triple_pos), len(triple_neg)//len(triple_pos), axis = 0)
