@@ -1,12 +1,3 @@
-"""
-- load our data (tabels of MERS sars-cov-1 sars-cov-2 high confidence)
-- transfer learning - train on sars-cov-1 and mers with freezing weights
-- evaluate on sars-cov-2 (look at inference.py and analysis.py)
-- load and save trained models
-- get some results on val and test for both tasks
-- write up results
-"""
-
 from seq2tensor import s2t
 
 import keras
@@ -102,6 +93,17 @@ def fit_model(model, model_num, epochs, batch_size, steps, score_threshold,
     print('Test ROCAUC: %.3f, acc: %.3f' % (test_auc, test_acc))
 
 
+def get_positives(data_file, vp_set, hp_set, prot2embed, seq2t, seq_size, data_type):
+    positives, vp2numPos = get_h_and_v_proteins(data_file, vp_set, hp_set)
+    for i in range(len(positives)):
+        hp, vp = positives[i]
+        prot2embed[vp] = np.array(seq2t.embed_normalized(vp_set[vp], seq_size))
+    vps = set(vp2numPos.keys())
+    print('Number of %s positives: %d' % (data_type, len(positives)))
+    print('Number of %s viral proteins: %d'% (data_type, len(vps)))
+    return positives, vps
+
+
 def fine_tune_rcnn(model_file, model_num, epochs, batch_size, steps, score_threshold, option,
                    trainable_layers, seq_size,
                    hp_set, prot2embed,
@@ -191,7 +193,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('model_num', metavar='model_num', type=str,
                         help='the number of the model file to use')
-    parser.add_argument('trainable_layers', metavar='model_num', type=str,
+    parser.add_argument('trainable_layers', metavar='trainable_layers', type=str,
                         help='the layers that should be trainable: should be list of\
                      ranges (a-b) splited by commas. for example, 21-22,39-39')
     parser.add_argument('train', metavar='train', type=str,
@@ -209,6 +211,8 @@ def main():
                         help='the threshold for comparing accuracy')
     parser.add_argument('--log_each_epoch', metavar='log_each_epoch', type=bool, default=True)
     parser.add_argument('--ratio', metavar='ratio', type=int, default=10)
+    parser.add_argument('--separate_test_train_protein', metavar='separate_test_train_protein', type=bool,
+                        default=False, help='do not train the model on test protein')
 
     args = parser.parse_args()
     seq_size = args.seq_size
@@ -245,32 +249,36 @@ def main():
             hp_set.add(items[0])
             prot2embed[items[0]] = np.array(seq2t.embed_normalized(items[3], seq_size))
     print('Number of host proteins: ', len(hp_set))
+
+    def run_rcnn(train_vp_set, test_vp_set):
+        train_positives, train_vps = get_positives(train_file, train_vp_set, hp_set, prot2embed, seq2t, seq_size, 'train')
+        test_positives, test_vps = get_positives(test_file, test_vp_set, hp_set, prot2embed, seq2t, seq_size, 'test')
+
+        if 0 == len(test_positives):
+            return
+
+        fine_tune_rcnn(model_file, model_num, epochs, batch_size, steps, score_threshold, option,
+                       trainable_layers, seq_size,
+                       hp_set, prot2embed,
+                       train_positives, test_positives, train_vps, test_vps, args.log_each_epoch, args.ratio)
+
     vp_set = {}
+    vp_name = set()
     with open(cov_prot_file, 'r') as f:
         next(f)
         for line in f:
             items = line.strip().split(',')
+            vp_name.add(items[1])
             vp_set[items[0] + items[1]] = items[2]
-    train_positives, vp2numPos = get_h_and_v_proteins(train_file, vp_set, hp_set)
-    for i in range(len(train_positives)):
-        hp, vp = train_positives[i]
-        prot2embed[vp] = np.array(seq2t.embed_normalized(vp_set[vp], seq_size))
-    train_vps = set(vp2numPos.keys())
-    print('Number of positives: ', len(train_positives))
-    print('Number of train viral proteins: ', len(train_vps))
-    test_positives, test_vp2numPos = get_h_and_v_proteins(test_file, vp_set, hp_set)
-    for i in range(len(test_positives)):
-        hp, vp = test_positives[i]
-        prot2embed[vp] = np.array(seq2t.embed_normalized(vp_set[vp], seq_size))
-    test_vps = set(test_vp2numPos.keys())
-    print('Number of test positives: ', len(test_positives))
-    print('Number of test viral proteins: ', len(test_vps))
 
+    if not args.separate_test_train_protein:
+        run_rcnn(vp_set, vp_set)
+        return
 
-    fine_tune_rcnn(model_file, model_num, epochs, batch_size, steps, score_threshold, option,
-                   trainable_layers, seq_size,
-                   hp_set, prot2embed,
-                   train_positives, test_positives, train_vps, test_vps, args.log_each_epoch, args.ratio)
+    for vp in vp_name:
+        print('Test on protein: ', vp)
+        run_rcnn({k: v for k, v in vp_set.items() if not k.endswith(vp)},
+                 {k: v for k, v in vp_set.items() if k.endswith(vp)})
 
 
 if __name__ == "__main__":
