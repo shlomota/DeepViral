@@ -81,11 +81,15 @@ with open(hpi_file, 'r') as f:
         items = line.strip().split('\t')
         if items[0] not in hp_set or len(items) < 7:
             continue
+        #TODO: restore
         # if float(items[6]) >= float(thres):
         hp = items[0]
         vp = items[1]
+
+        #TODO: restore
         patho = '<http://purl.obolibrary.org/obo/NCBITaxon_' + items[2] + '>'
-        if hp not in embed_dict or patho not in embed_dict:
+        # if hp not in embed_dict or patho not in embed_dict:
+        if hp not in embed_dict:
             continue
         if len(items[5]) > MAXLEN:
             continue
