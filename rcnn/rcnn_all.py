@@ -90,8 +90,10 @@ with open(hpi_file, 'r') as f:
         patho = '<http://purl.obolibrary.org/obo/NCBITaxon_' + items[2] + '>'
         # if hp not in embed_dict or patho not in embed_dict:
         if hp not in embed_dict:
+            print(1)
             continue
         if len(items[5]) > MAXLEN:
+            print(2)
             continue
         family = '<http://purl.obolibrary.org/obo/NCBITaxon_' + items[3] + '>'
         prot2embed[vp] = np.array(seq2t.embed_normalized(items[5], seq_size))
