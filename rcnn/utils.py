@@ -144,12 +144,11 @@ def get_triple(positives, families, hp_set, vp_set, vp2patho, option):
 
     triple_neg = []
     for hp in hp_set:
-        for vp in vp_set:
+        for vp in vp_et:
             pair = (hp, vp)
             if pair not in positives_set:
                 triple_neg.append((hp, vp, vp2patho[vp], 0))
 
-    # TODO: remove
     import random
     triple_neg = random.choices(triple_neg, k=len(triple_neg) // 10)
 
