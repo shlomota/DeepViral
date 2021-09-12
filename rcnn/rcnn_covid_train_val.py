@@ -1,3 +1,7 @@
+"""
+Code used for transfer learning and evaluation on SARS-CoV-2 interactions
+"""
+
 from seq2tensor import s2t
 
 import keras

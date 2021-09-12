@@ -1,3 +1,7 @@
+"""
+Train base model on human-virus protein interactions
+"""
+
 from seq2tensor import s2t
 
 import keras
@@ -49,8 +53,8 @@ open_preds.close()
 
 swissprot_file = '../data/swissprot-proteome.tab'
 # hpi_file = '../data/train_1000.txt'
-hpi_file = '../data/train.txt'
 hpi_file = '../data/human_virus_two_hybrid_interactions.csv'
+hpi_file = '../data/train.txt'
 
 embed_dict = read_embedding(embedding_file)
 

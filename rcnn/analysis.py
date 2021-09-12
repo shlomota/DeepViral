@@ -8,7 +8,7 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, preci
 
 thresh = 1e-4
 thresh_clf = 0.2
-df = pd.read_csv("results.csv")
+df = pd.read_csv("results/results.csv")
 df["score1"] = (df.score1>thresh).astype(np.int)
 df["mist"] = (df.mist>thresh).astype(np.int)
 df["score3"] = (df.score1) & (df.score2)
